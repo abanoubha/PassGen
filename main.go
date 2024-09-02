@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/csv"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -58,8 +60,51 @@ type CharFreq struct {
 	Freq int
 }
 
+type KV struct {
+	Key string
+	Val int
+}
+
 func countCharFreq(filename string) {
 	fmt.Println("counting frequency of character occurrences in ", filename, " ...")
+
+	counts := countChars(filename)
+
+	kvPairs := make([]KV, 0, len(counts))
+
+	for k, v := range counts {
+		kvPairs = append(kvPairs, KV{k, v})
+	}
+
+	sort.Slice(kvPairs, func(i, j int) bool {
+		return kvPairs[i].Val > kvPairs[j].Val
+	})
+
+	for char, count := range kvPairs {
+		fmt.Printf("%v: %v\n", char, count)
+	}
+}
+
+func countChars(filename string) map[string]int {
+	charCounts := make(map[string]int)
+	file, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		for _, char := range scanner.Text() {
+			charCounts[string(char)]++
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	return charCounts
 }
 
 func generatePasswords(passwordLength int, charFreqsFile string) {
