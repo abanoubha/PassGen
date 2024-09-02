@@ -7,7 +7,7 @@ PwdGen is generating passwords based on the character frequency.
 ```sh
 go mod tidy
 
-go build -o passgen .
+go build -o pwdgen .
 
 go run .
 
