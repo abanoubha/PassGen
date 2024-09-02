@@ -51,6 +51,15 @@ Developer's Website : https://AbanoubHanna.com`)
 			countCharFreq(count)
 		} else if password > 0 && charFreqs != "" {
 			generatePasswords(password, charFreqs)
+		} else {
+			fmt.Println(`
+You did not used the correct arguments.
+
+Examples:
+  pwdgen -v # show the app version
+  pwdgen -c textfile.txt # show the count of each character occurrences
+  pwdgen -p 8 -f charfreq.txt # generate passwords
+  pwdgen -h # show (this) help screen`)
 		}
 	}
 }
