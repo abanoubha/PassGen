@@ -16,6 +16,7 @@ import (
 
 var (
 	version   bool
+	help      bool
 	count     string
 	charFreqs string
 	password  int
@@ -33,6 +34,8 @@ passgen -v # show version number and release info`,
 
 	rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show version number and release info")
 
+	rootCmd.Flags().BoolVarP(&help, "help", "h", false, "show help screen")
+
 	rootCmd.Flags().StringVarP(&count, "count", "c", "", "calculate the frequency of occurrence of each character in a plain text file")
 
 	rootCmd.Flags().IntVarP(&password, "password", "p", 0, "generate passwords according to the character frequency specified")
@@ -47,6 +50,20 @@ Software Developer  : Abanoub Hanna
 Source Code         : https://github.com/abanoubha/PassGen
 X platform          : https://x.com/@AbanoubHA
 Developer's Website : https://AbanoubHanna.com`)
+		} else if help {
+			fmt.Println(`
+passgen v0.1.0 beta
+
+Software Developer  : Abanoub Hanna
+Source Code         : https://github.com/abanoubha/PassGen
+X platform          : https://x.com/@AbanoubHA
+Developer's Website : https://AbanoubHanna.com
+
+Examples:
+  pwdgen -v # show the app version
+  pwdgen -c textfile.txt # show the count of each character occurrences
+  pwdgen -p 8 -f charfreq.txt # generate passwords
+  pwdgen -h # show (this) help screen`)
 		} else if count != "" {
 			countCharFreq(count)
 		} else if password > 0 && charFreqs != "" {
