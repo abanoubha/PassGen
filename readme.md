@@ -1,6 +1,6 @@
-# PassGen
+# PwdGen
 
-PassGen is generating passwords based on the character frequency.
+PwdGen is generating passwords based on the character frequency.
 
 ## commands
 
@@ -13,4 +13,3 @@ go run .
 
 go run -race .
 ```
-
