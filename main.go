@@ -79,6 +79,10 @@ Examples:
   pwdgen -h # show (this) help screen`)
 		}
 	}
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+	}
 }
 
 type CharFreq struct {
