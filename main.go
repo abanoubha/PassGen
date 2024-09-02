@@ -1,9 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/csv"
 	"fmt"
+	"os"
+	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/rand"
 )
 
 var (
@@ -47,10 +53,100 @@ Developer's Website : https://AbanoubHanna.com`)
 	}
 }
 
+type CharFreq struct {
+	Char string
+	Freq int
+}
+
 func countCharFreq(filename string) {
 	fmt.Println("counting frequency of character occurrences in ", filename, " ...")
 }
 
 func generatePasswords(passwordLength int, charFreqsFile string) {
 	fmt.Println("generating passwords with length of ", passwordLength, " respecting the character freqency specified in ", charFreqsFile, " ...")
+
+	charFreqs, err := readCharFreqs(charFreqsFile)
+	if err != nil {
+		panic("can not read the character frequency file specified.")
+	}
+
+	cumFreqs := make([]int, len(charFreqs))
+	cumFreqs[0] = charFreqs[0].Freq
+	for i := 1; i < len(charFreqs); i++ {
+		cumFreqs[i] = cumFreqs[i-1] + charFreqs[i].Freq
+	}
+
+	for i := 1; i < 1_000_000_000; i++ {
+		fmt.Println(generateStrings(charFreqs, cumFreqs, passwordLength))
+	}
+}
+
+func generateStrings(charFreqs []CharFreq, cumFreqs []int, passLength int) string {
+	rand.New(rand.NewSource(uint64(time.Now().UnixNano())))
+
+	// Calculate total frequency
+	totalFreq := 0
+	for _, freq := range charFreqs {
+		totalFreq += freq.Freq
+	}
+
+	// Generate strings
+	// strings := make([]string, numStrings)
+	// for i := 0; i < numStrings; i++ {
+	var sb bytes.Buffer
+	for j := 0; j < passLength; j++ {
+		// Generate a random number between 0 and totalFreq-1
+		randNum := rand.Intn(totalFreq)
+
+		// Find the corresponding character based on the cumulative frequency distribution
+		index := 0
+		for ; index < len(cumFreqs); index++ {
+			if randNum < cumFreqs[index] {
+				break
+			}
+		}
+		sb.WriteString(charFreqs[index].Char)
+	}
+	// strings[i] = sb.String()
+	// }
+
+	// return strings
+	return sb.String()
+}
+
+func readCharFreqs(charFreqsFile string) ([]CharFreq, error) {
+	csvFile, err := os.Open(charFreqsFile)
+	if err != nil {
+		return []CharFreq{}, fmt.Errorf("Error opening file: ", err)
+	}
+	defer csvFile.Close()
+
+	reader := csv.NewReader(csvFile)
+
+	// _, err = reader.Read()
+	// if err != nil {
+	// 	fmt.Println("Error reading header:", err)
+	// 	return
+	// }
+
+	charFreqs := []CharFreq{}
+
+	for {
+		record, err := reader.Read()
+		if err != nil {
+			if err.Error() == "EOF" {
+				break // End of file
+			}
+			return []CharFreq{}, fmt.Errorf("Error reading CSV file records : ", err)
+		}
+
+		freq, err := strconv.Atoi(record[1])
+		if err != nil {
+			return nil, err
+		}
+
+		charFreqs = append(charFreqs, CharFreq{record[0], freq})
+	}
+
+	return charFreqs, nil
 }
