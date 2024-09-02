@@ -1,4 +1,4 @@
-module github.com/abanoubha/passgen
+module github.com/abanoubha/pwdgen
 
 go 1.23.0
 
