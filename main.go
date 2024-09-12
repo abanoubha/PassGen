@@ -20,6 +20,7 @@ var (
 	count     string
 	charFreqs string
 	password  int
+	benchmark bool
 )
 
 func main() {
@@ -36,6 +37,8 @@ passgen -v # show version number and release info`,
 
 	rootCmd.Flags().BoolVarP(&help, "help", "h", false, "show help screen")
 
+	rootCmd.Flags().BoolVarP(&benchmark, "benchmark", "b", false, "benchmark the password generation speed")
+
 	rootCmd.Flags().StringVarP(&count, "count", "c", "", "calculate the frequency of occurrence of each character in a plain text file")
 
 	rootCmd.Flags().IntVarP(&password, "password", "p", 0, "generate passwords according to the character frequency specified")
@@ -50,6 +53,8 @@ passgen -v # show version number and release info`,
 			countCharFreq(count)
 		} else if password > 0 && charFreqs != "" {
 			generatePasswords(password, charFreqs)
+		} else if benchmark && charFreqs != "" {
+			runBenchmark(charFreqs)
 		} else {
 			fmt.Println(`You did not use the correct arguments.`)
 			printHelpScreen()
@@ -74,7 +79,29 @@ Examples:
   pwdgen -v # show the app version
   pwdgen -c textfile.txt # show the count of each character occurrences
   pwdgen -p 8 -f charfreq.txt # generate passwords
+  pwdgen -b -f charfreq.txt # run the benchmark 
   pwdgen -h # show (this) help screen`)
+}
+
+func runBenchmark(charFreqsFile string) {
+	start := time.Now()
+
+	charFreqs, err := readCharFreqs(charFreqsFile)
+	if err != nil {
+		panic("can not read the character frequency file specified.")
+	}
+
+	cumFreqs := make([]int, len(charFreqs))
+	cumFreqs[0] = charFreqs[0].Freq
+	for i := 1; i < len(charFreqs); i++ {
+		cumFreqs[i] = cumFreqs[i-1] + charFreqs[i].Freq
+	}
+
+	for i := 1; i < 1_000_000; i++ {
+		generateStrings(charFreqs, cumFreqs, 8)
+	}
+
+	fmt.Println("Time elapsed: ", time.Since(start))
 }
 
 type CharFreq struct {
