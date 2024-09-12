@@ -192,7 +192,7 @@ func generateStrings(charFreqs []CharFreq, cumFreqs []int, passLength int) strin
 func readCharFreqs(charFreqsFile string) ([]CharFreq, error) {
 	csvFile, err := os.Open(charFreqsFile)
 	if err != nil {
-		return []CharFreq{}, fmt.Errorf("Error opening file: ", err)
+		return []CharFreq{}, fmt.Errorf("error opening file: %v", err)
 	}
 	defer csvFile.Close()
 
