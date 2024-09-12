@@ -43,17 +43,28 @@ passgen -v # show version number and release info`,
 
 	rootCmd.Run = func(cmd *cobra.Command, args []string) {
 		if version {
-			fmt.Println(`
-passgen v0.1.0 beta
-
-Software Developer  : Abanoub Hanna
-Source Code         : https://github.com/abanoubha/PassGen
-X platform          : https://x.com/@AbanoubHA
-Developer's Website : https://AbanoubHanna.com`)
+			printHelpScreen()
 		} else if help {
-			fmt.Println(`
-passgen v0.1.0 beta
+			printHelpScreen()
+		} else if count != "" {
+			countCharFreq(count)
+		} else if password > 0 && charFreqs != "" {
+			generatePasswords(password, charFreqs)
+		} else {
+			fmt.Println(`You did not used the correct arguments.`)
+			printHelpScreen()
+		}
+	}
 
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func printHelpScreen() {
+	fmt.Println(`
+pwdgen v0.1.0 beta
+	
 Software Developer  : Abanoub Hanna
 Source Code         : https://github.com/abanoubha/PassGen
 X platform          : https://x.com/@AbanoubHA
@@ -64,25 +75,6 @@ Examples:
   pwdgen -c textfile.txt # show the count of each character occurrences
   pwdgen -p 8 -f charfreq.txt # generate passwords
   pwdgen -h # show (this) help screen`)
-		} else if count != "" {
-			countCharFreq(count)
-		} else if password > 0 && charFreqs != "" {
-			generatePasswords(password, charFreqs)
-		} else {
-			fmt.Println(`
-You did not used the correct arguments.
-
-Examples:
-  pwdgen -v # show the app version
-  pwdgen -c textfile.txt # show the count of each character occurrences
-  pwdgen -p 8 -f charfreq.txt # generate passwords
-  pwdgen -h # show (this) help screen`)
-		}
-	}
-
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-	}
 }
 
 type CharFreq struct {
