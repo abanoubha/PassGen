@@ -212,7 +212,7 @@ func readCharFreqs(charFreqsFile string) ([]CharFreq, error) {
 			if err.Error() == "EOF" {
 				break // End of file
 			}
-			return []CharFreq{}, fmt.Errorf("Error reading CSV file records : %v", err)
+			return []CharFreq{}, fmt.Errorf("error reading CSV file records : %v", err)
 		}
 
 		freq, err := strconv.Atoi(record[1])
