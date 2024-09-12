@@ -64,7 +64,7 @@ passgen -v # show version number and release info`,
 func printHelpScreen() {
 	fmt.Println(`
 pwdgen v0.1.0 beta
-	
+
 Software Developer  : Abanoub Hanna
 Source Code         : https://github.com/abanoubha/PassGen
 X platform          : https://x.com/@AbanoubHA
@@ -205,6 +205,10 @@ func readCharFreqs(charFreqsFile string) ([]CharFreq, error) {
 				break // End of file
 			}
 			return []CharFreq{}, fmt.Errorf("error reading CSV file records : %v", err)
+		}
+
+		if len(record) != 2 {
+			return []CharFreq{}, fmt.Errorf("invalid record format: expected 2 columns")
 		}
 
 		freq, err := strconv.Atoi(record[1])
