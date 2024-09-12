@@ -51,7 +51,7 @@ passgen -v # show version number and release info`,
 		} else if password > 0 && charFreqs != "" {
 			generatePasswords(password, charFreqs)
 		} else {
-			fmt.Println(`You did not used the correct arguments.`)
+			fmt.Println(`You did not use the correct arguments.`)
 			printHelpScreen()
 		}
 	}
