@@ -188,7 +188,7 @@ func generateStrings(charFreqs []CharFreq, cumFreqs []int, passLength int) strin
 	// strings := make([]string, numStrings)
 	// for i := 0; i < numStrings; i++ {
 	var sb bytes.Buffer
-	for j := 0; j < passLength; j++ {
+	for range passLength {
 		// Generate a random number between 0 and totalFreq-1
 		randNum := rand.Intn(totalFreq)
 
